@@ -96,8 +96,17 @@ function joinEvent(userId, userAlias, eventId) {
     userId, userAlias, _.now() / 1000 | 0).then(JSON.parse)
 }
 
+function rejoinEvent(userId, userAlias, eventId) {
+  return redis.rejoinEvent(`events/${eventId}`, pendingKey, activeKey,
+    userId, userAlias).then(JSON.parse)
+}
+
+function leaveEvent(userId, eventId) {
+  return redis.leaveEvent(`events/${eventId}`, pendingKey, activeKey, userId)
+}
+
 module.exports = function (redisClient) {
   redis = redisClient
   installLuaScripts(redisClient)
-  return {createEvent, autojoinEvent, getEventsFor, joinEvent, cancelEvent}
+  return {createEvent, autojoinEvent, getEventsFor, joinEvent, leaveEvent, cancelEvent}
 }
